@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOCX to PDF Conversion Demo - Nutrient DWS API</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #0078d4 0%, #106ebe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 300;
+        }
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 30px;
+        }
+        .demo-section {
+            margin: 30px 0;
+            padding: 25px;
+            border: 2px solid #e3f2fd;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+        .demo-section h3 {
+            margin: 0 0 20px 0;
+            color: #0078d4;
+            font-size: 20px;
+        }
+        .file-upload {
+            border: 2px dashed #0078d4;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            background: white;
+            margin: 20px 0;
+        }
+        .file-upload.dragover {
+            background: #e3f2fd;
+            border-color: #1976d2;
+        }
+        .upload-btn {
+            background: #0078d4;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+            transition: background 0.3s ease;
+        }
+        .upload-btn:hover {
+            background: #106ebe;
+        }
+        .upload-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        .results {
+            margin-top: 30px;
+            padding: 25px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            display: none;
+        }
+        .pdf-links {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .pdf-link {
+            display: inline-block;
+            padding: 12px 20px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: transform 0.2s ease;
+        }
+        .pdf-link:hover {
+            transform: translateY(-2px);
+        }
+        .view-btn {
+            background: #0078d4;
+            color: white;
+        }
+        .download-btn {
+            background: #28a745;
+            color: white;
+        }
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            border-left: 4px solid #28a745;
+        }
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            border-left: 4px solid #dc3545;
+        }
+        .progress {
+            display: none;
+            margin: 20px 0;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0078d4, #28a745);
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .feature {
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            text-align: center;
+        }
+        .feature-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+        .feature h4 {
+            margin: 0 0 10px 0;
+            color: #0078d4;
+        }
+        .feature p {
+            margin: 0;
+            color: #6c757d;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔄 DOCX to PDF Conversion Demo</h1>
+            <p>Convert Word documents to PDF with online viewing and download capabilities</p>
+        </div>
+        
+        <div class="content">
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">📄</div>
+                    <h4>Upload DOCX</h4>
+                    <p>Drag and drop or select your Word documents</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🔄</div>
+                    <h4>Convert to PDF</h4>
+                    <p>High-quality conversion using Nutrient DWS API</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">👁️</div>
+                    <h4>View Online</h4>
+                    <p>Preview PDFs in the Nutrient Viewer</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">📥</div>
+                    <h4>Download</h4>
+                    <p>Get your converted PDF files instantly</p>
+                </div>
+            </div>
+
+            <div class="demo-section">
+                <h3>🚀 Try the Conversion</h3>
+                <p>Upload a DOCX file to convert it to PDF and get viewing/download links.</p>
+                
+                <div class="file-upload" id="dropZone">
+                    <h4>📁 Upload DOCX File</h4>
+                    <p>Drag and drop your DOCX file here or click to browse</p>
+                    <input type="file" id="fileInput" accept=".docx,.doc" style="display: none;">
+                    <button class="upload-btn" onclick="document.getElementById('fileInput').click()">Choose DOCX File</button>
+                    <p><small>Supported: .docx, .doc (Max 50MB)</small></p>
+                </div>
+
+                <button class="upload-btn" id="convertBtn" onclick="convertToPdf()" disabled>🔄 Convert to PDF</button>
+
+                <div class="progress" id="progress">
+                    <h4>Converting...</h4>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressBar"></div>
+                    </div>
+                    <p id="progressText">Preparing conversion...</p>
+                </div>
+
+                <div class="results" id="results"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://nutrient-dws-api.vercel.app';
+        let selectedFile = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeEventListeners();
+        });
+
+        function initializeEventListeners() {
+            // File input change
+            document.getElementById('fileInput').addEventListener('change', handleFileSelect);
+            
+            // Drag and drop
+            const dropZone = document.getElementById('dropZone');
+            dropZone.addEventListener('dragover', handleDragOver);
+            dropZone.addEventListener('dragleave', handleDragLeave);
+            dropZone.addEventListener('drop', handleDrop);
+        }
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                selectedFile = file;
+                updateConvertButton();
+                showFileInfo(file);
+            }
+        }
+
+        function handleDragOver(event) {
+            event.preventDefault();
+            event.currentTarget.classList.add('dragover');
+        }
+
+        function handleDragLeave(event) {
+            event.preventDefault();
+            event.currentTarget.classList.remove('dragover');
+        }
+
+        function handleDrop(event) {
+            event.preventDefault();
+            event.currentTarget.classList.remove('dragover');
+            const file = event.dataTransfer.files[0];
+            if (file && (file.name.toLowerCase().endsWith('.docx') || file.name.toLowerCase().endsWith('.doc'))) {
+                selectedFile = file;
+                updateConvertButton();
+                showFileInfo(file);
+            }
+        }
+
+        function showFileInfo(file) {
+            const dropZone = document.getElementById('dropZone');
+            dropZone.innerHTML = `
+                <h4>✅ File Selected</h4>
+                <p><strong>${file.name}</strong></p>
+                <p><small>Size: ${formatFileSize(file.size)}</small></p>
+                <button class="upload-btn" onclick="resetFileSelection()">Choose Different File</button>
+            `;
+        }
+
+        function resetFileSelection() {
+            selectedFile = null;
+            updateConvertButton();
+            const dropZone = document.getElementById('dropZone');
+            dropZone.innerHTML = `
+                <h4>📁 Upload DOCX File</h4>
+                <p>Drag and drop your DOCX file here or click to browse</p>
+                <input type="file" id="fileInput" accept=".docx,.doc" style="display: none;">
+                <button class="upload-btn" onclick="document.getElementById('fileInput').click()">Choose DOCX File</button>
+                <p><small>Supported: .docx, .doc (Max 50MB)</small></p>
+            `;
+            document.getElementById('fileInput').addEventListener('change', handleFileSelect);
+        }
+
+        function updateConvertButton() {
+            const convertBtn = document.getElementById('convertBtn');
+            convertBtn.disabled = !selectedFile;
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        async function convertToPdf() {
+            if (!selectedFile) return;
+
+            const convertBtn = document.getElementById('convertBtn');
+            const progress = document.getElementById('progress');
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            const results = document.getElementById('results');
+
+            convertBtn.disabled = true;
+            progress.style.display = 'block';
+            results.style.display = 'none';
+            progressBar.style.width = '0%';
+            progressText.textContent = 'Preparing conversion...';
+
+            const formData = new FormData();
+            formData.append('files', selectedFile);
+            formData.append('operation', 'convert');
+
+            try {
+                progressBar.style.width = '30%';
+                progressText.textContent = 'Uploading file...';
+
+                const response = await fetch(`${API_BASE}/api/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                progressBar.style.width = '70%';
+                progressText.textContent = 'Converting to PDF...';
+
+                if (response.ok) {
+                    const result = await response.json();
+                    progressBar.style.width = '100%';
+                    progressText.textContent = 'Conversion complete!';
+                    
+                    setTimeout(() => {
+                        displayResults(result);
+                    }, 1000);
+                } else {
+                    const errorText = await response.text();
+                    displayError(`Conversion failed: ${response.status} - ${errorText}`);
+                }
+            } catch (error) {
+                displayError(`Error: ${error.message}`);
+            } finally {
+                convertBtn.disabled = false;
+                setTimeout(() => {
+                    progress.style.display = 'none';
+                }, 2000);
+            }
+        }
+
+        function displayResults(result) {
+            const results = document.getElementById('results');
+            results.style.display = 'block';
+            
+            const file = result.data.files[0];
+            
+            if (file.error) {
+                results.innerHTML = `<div class="error-message">❌ ${file.error}</div>`;
+                return;
+            }
+
+            let html = `
+                <div class="success-message">
+                    <h4>✅ Conversion Successful!</h4>
+                    <p><strong>Original File:</strong> ${file.filename}</p>
+                    <p><strong>Converted PDF:</strong> ${file.filename.replace(/\.(docx|doc)$/i, '.pdf')}</p>
+                    <p><strong>Status:</strong> ${file.message}</p>
+                </div>
+            `;
+
+            if (file.convertedPdf) {
+                html += `
+                    <div style="margin: 20px 0;">
+                        <h4>📄 Your PDF is Ready!</h4>
+                        <div class="pdf-links">
+                            ${file.convertedPdf.viewerUrl ? `
+                                <a href="/viewer.html?token=${file.convertedPdf.token || ''}&sessionId=${file.convertedPdf.sessionId || ''}&documentUrl=${encodeURIComponent(file.convertedPdf.downloadUrl || '')}" target="_blank" class="pdf-link view-btn">
+                                    👁️ View PDF Online
+                                </a>
+                            ` : ''}
+                            <a href="${file.convertedPdf.downloadUrl}" target="_blank" class="pdf-link download-btn">
+                                📥 Download PDF
+                            </a>
+                        </div>
+                        <p><small>💡 <strong>View PDF Online:</strong> Opens the PDF in the Nutrient Viewer for online viewing</small></p>
+                        <p><small>💡 <strong>Download PDF:</strong> Direct download of the converted PDF file</small></p>
+                    </div>
+                `;
+            }
+
+            results.innerHTML = html;
+        }
+
+        function displayError(message) {
+            const results = document.getElementById('results');
+            results.style.display = 'block';
+            results.innerHTML = `<div class="error-message">❌ ${message}</div>`;
+        }
+    </script>
+</body>
+</html> 

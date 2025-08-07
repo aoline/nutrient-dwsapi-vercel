@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "functions": {
+    "api/process.js": {
+      "maxDuration": 60
+    },
+    "api/extract.js": {
+      "maxDuration": 60
+    },
+    "api/upload.js": {
+      "maxDuration": 60
+    }
+  }
+} 

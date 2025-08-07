@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutrient Document Processor - Standalone</title>
+    <link rel="stylesheet" href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-core/11.0.0/css/fabric.min.css"/>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f3f2f1;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: #0078d4;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .content {
+            padding: 20px;
+        }
+        .operation-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .operation-buttons button {
+            flex: 1;
+            min-width: 120px;
+            padding: 10px 15px;
+            border: 2px solid #0078d4;
+            background: white;
+            color: #0078d4;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .operation-buttons button:hover {
+            background: #0078d4;
+            color: white;
+        }
+        .operation-buttons button.active {
+            background: #0078d4;
+            color: white;
+        }
+        .file-upload-section {
+            border: 2px dashed #0078d4;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+            background: #f8f9fa;
+        }
+        .file-upload-section.dragover {
+            background: #e3f2fd;
+            border-color: #1976d2;
+        }
+        .file-input {
+            display: none;
+        }
+        .upload-btn {
+            background: #0078d4;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        .upload-btn:hover {
+            background: #106ebe;
+        }
+        .upload-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        .file-list {
+            margin: 20px 0;
+        }
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            margin: 5px 0;
+        }
+        .file-item button {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .progress {
+            display: none;
+            margin: 20px 0;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #0078d4;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+        .results {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: none;
+        }
+        .results h3 {
+            margin-top: 0;
+            color: #0078d4;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .watermark-options {
+            display: none;
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .watermark-options input, .watermark-options select {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .watermark-options label {
+            display: block;
+            margin: 10px 0 5px 0;
+            font-weight: 500;
+        }
+        .opacity-slider {
+            width: 100%;
+            margin: 10px 0;
+        }
+        .opacity-value {
+            text-align: center;
+            font-weight: bold;
+            color: #0078d4;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌿 Nutrient Document Processor</h1>
+            <p>Process documents with advanced AI-powered extraction and conversion</p>
+        </div>
+        
+        <div class="content">
+            <div class="operation-buttons">
+                <button onclick="selectOperation('extract')" id="extractBtn" class="active">📄 Extract Text</button>
+                <button onclick="selectOperation('convert')" id="convertBtn">🔄 DOCX → PDF</button>
+                <button onclick="selectOperation('watermark')" id="watermarkBtn">💧 Add Watermark</button>
+                <button onclick="selectOperation('ocr')" id="ocrBtn">👁️ OCR Processing</button>
+            </div>
+
+            <div class="file-upload-section" id="dropZone">
+                <h3>📁 Upload Documents</h3>
+                <p>Drag and drop files here or click to browse</p>
+                <input type="file" id="fileInput" class="file-input" multiple accept=".pdf,.docx,.doc">
+                <button class="upload-btn" onclick="document.getElementById('fileInput').click()">Choose Files</button>
+                <p><small>Supported formats: PDF, DOCX, DOC (Max 50MB per file)</small></p>
+            </div>
+
+            <div class="file-list" id="fileList"></div>
+
+            <div class="watermark-options" id="watermarkOptions">
+                <h4>💧 Watermark Settings</h4>
+                <label for="watermarkText">Watermark Text:</label>
+                <input type="text" id="watermarkText" placeholder="Enter watermark text (e.g., CONFIDENTIAL)" value="CONFIDENTIAL">
+                
+                <label for="watermarkPosition">Position:</label>
+                <select id="watermarkPosition">
+                    <option value="center">Center</option>
+                    <option value="top-left">Top Left</option>
+                    <option value="top-right">Top Right</option>
+                    <option value="bottom-left">Bottom Left</option>
+                    <option value="bottom-right">Bottom Right</option>
+                </select>
+                
+                <label for="watermarkOpacity">Opacity:</label>
+                <input type="range" id="watermarkOpacity" class="opacity-slider" min="0" max="100" value="50">
+                <div class="opacity-value" id="opacityValue">50%</div>
+            </div>
+
+            <button class="upload-btn" id="processBtn" onclick="processDocuments()" disabled>🚀 Process Documents</button>
+
+            <div class="progress" id="progress">
+                <h4>Processing...</h4>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressBar"></div>
+                </div>
+                <p id="progressText">Preparing...</p>
+            </div>
+
+            <div class="results" id="results"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://nutrient-dws-api.vercel.app';
+        let currentOperation = 'extract';
+        let files = [];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeEventListeners();
+        });
+
+        function initializeEventListeners() {
+            // File input change
+            document.getElementById('fileInput').addEventListener('change', handleFileSelect);
+            
+            // Drag and drop
+            const dropZone = document.getElementById('dropZone');
+            dropZone.addEventListener('dragover', handleDragOver);
+            dropZone.addEventListener('dragleave', handleDragLeave);
+            dropZone.addEventListener('drop', handleDrop);
+            
+            // Opacity slider
+            document.getElementById('watermarkOpacity').addEventListener('input', function(e) {
+                document.getElementById('opacityValue').textContent = e.target.value + '%';
+            });
+        }
+
+        function selectOperation(operation) {
+            currentOperation = operation;
+            
+            // Update button states
+            document.querySelectorAll('.operation-buttons button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(operation + 'Btn').classList.add('active');
+
+            // Show/hide watermark options
+            const watermarkOptions = document.getElementById('watermarkOptions');
+            watermarkOptions.style.display = operation === 'watermark' ? 'block' : 'none';
+
+            // Update file upload description based on operation
+            const dropZone = document.getElementById('dropZone');
+            const description = dropZone.querySelector('p');
+            
+            if (operation === 'convert') {
+                description.innerHTML = 'Drag and drop <strong>DOCX or DOC files</strong> here or click to browse<br><small>Files will be converted to PDF format</small>';
+            } else if (operation === 'watermark') {
+                description.innerHTML = 'Drag and drop <strong>PDF files</strong> here or click to browse<br><small>Watermarks will be added to the documents</small>';
+            } else if (operation === 'ocr') {
+                description.innerHTML = 'Drag and drop <strong>scanned documents</strong> here or click to browse<br><small>OCR will extract text from images</small>';
+            } else {
+                description.innerHTML = 'Drag and drop files here or click to browse<br><small>Text will be extracted from documents</small>';
+            }
+
+            updateProcessButton();
+        }
+
+        function handleFileSelect(event) {
+            addFiles(Array.from(event.target.files));
+        }
+
+        function handleDragOver(event) {
+            event.preventDefault();
+            event.currentTarget.classList.add('dragover');
+        }
+
+        function handleDragLeave(event) {
+            event.preventDefault();
+            event.currentTarget.classList.remove('dragover');
+        }
+
+        function handleDrop(event) {
+            event.preventDefault();
+            event.currentTarget.classList.remove('dragover');
+            addFiles(Array.from(event.dataTransfer.files));
+        }
+
+        function addFiles(newFiles) {
+            newFiles.forEach(file => {
+                if (file.type === 'application/pdf' || file.type.includes('word') || file.type.includes('document')) {
+                    files.push(file);
+                }
+            });
+            updateFileList();
+            updateProcessButton();
+        }
+
+        function updateFileList() {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
+
+            files.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <div>
+                        <strong>${file.name}</strong>
+                        <small>(${formatFileSize(file.size)})</small>
+                    </div>
+                    <button onclick="removeFile(${index})">Remove</button>
+                `;
+                fileList.appendChild(fileItem);
+            });
+        }
+
+        function removeFile(index) {
+            files.splice(index, 1);
+            updateFileList();
+            updateProcessButton();
+        }
+
+        function updateProcessButton() {
+            const processBtn = document.getElementById('processBtn');
+            processBtn.disabled = !canProcess();
+        }
+
+        function canProcess() {
+            if (['watermark', 'ocr'].includes(currentOperation)) {
+                return files.length > 0;
+            }
+            return files.length > 0;
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        async function processDocuments() {
+            if (!canProcess()) return;
+
+            const processBtn = document.getElementById('processBtn');
+            const progress = document.getElementById('progress');
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            const results = document.getElementById('results');
+
+            processBtn.disabled = true;
+            progress.style.display = 'block';
+            results.style.display = 'none';
+            progressBar.style.width = '0%';
+            progressText.textContent = 'Preparing...';
+
+            const formData = new FormData();
+            
+            // Add files
+            files.forEach(file => {
+                formData.append('files', file);
+            });
+            
+            // Add operation and options
+            formData.append('operation', currentOperation);
+            formData.append('extractTables', 'true');
+            formData.append('extractKeyValuePairs', 'true');
+
+            // Add watermark options if applicable
+            if (currentOperation === 'watermark') {
+                formData.append('watermarkText', document.getElementById('watermarkText').value);
+                formData.append('watermarkPosition', document.getElementById('watermarkPosition').value);
+                formData.append('watermarkOpacity', document.getElementById('watermarkOpacity').value / 100);
+            }
+
+            try {
+                progressBar.style.width = '50%';
+                progressText.textContent = 'Uploading files...';
+
+                const response = await fetch(`${API_BASE}/api/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                progressBar.style.width = '100%';
+                progressText.textContent = 'Processing complete!';
+
+                if (response.ok) {
+                    const result = await response.json();
+                    displayResults(result);
+                } else {
+                    const errorText = await response.text();
+                    displayError(`Upload failed: ${response.status} - ${errorText}`);
+                }
+            } catch (error) {
+                displayError(`Error: ${error.message}`);
+            } finally {
+                processBtn.disabled = false;
+                setTimeout(() => {
+                    progress.style.display = 'none';
+                }, 2000);
+            }
+        }
+
+        function displayResults(result) {
+            const results = document.getElementById('results');
+            results.style.display = 'block';
+            
+            let html = `
+                <div class="success">
+                    <h3>✅ Processing Complete!</h3>
+                    <p><strong>Operation:</strong> ${currentOperation}</p>
+                    <p><strong>Message:</strong> ${result.message}</p>
+                    <p><strong>Files Processed:</strong> ${result.data.summary.totalFiles}</p>
+                    <p><strong>Total Size:</strong> ${formatFileSize(result.data.summary.totalSize)}</p>
+                </div>
+            `;
+
+            result.data.files.forEach(file => {
+                html += `
+                    <div style="margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 4px;">
+                        <h4>📄 ${file.filename}</h4>
+                        <p><strong>Size:</strong> ${formatFileSize(file.size)}</p>
+                        <p><strong>Type:</strong> ${file.mimetype}</p>
+                        <p><strong>Status:</strong> ${file.message || 'Processed'}</p>
+                        
+                        ${file.error ? `<div class="error">❌ ${file.error}</div>` : ''}
+                        
+                        ${file.extractedText ? `<p><strong>Extracted Text:</strong> ${file.extractedText}</p>` : ''}
+                        
+                        ${file.ocrResult ? `<p><strong>OCR Result:</strong> ${file.ocrResult}</p>` : ''}
+                        
+                        ${file.convertedPdf ? `
+                            <div style="margin: 15px 0; padding: 15px; background: #e8f5e8; border-radius: 4px;">
+                                <h5>🔄 PDF Conversion Complete!</h5>
+                                <p><strong>Converted PDF:</strong> ${file.filename.replace(/\.(docx|doc)$/i, '.pdf')}</p>
+                                
+                                <div style="margin: 10px 0;">
+                                    ${file.convertedPdf.viewerUrl ? `
+                                        <a href="/viewer.html?token=${file.convertedPdf.token || ''}&sessionId=${file.convertedPdf.sessionId || ''}&documentUrl=${encodeURIComponent(file.convertedPdf.downloadUrl || '')}" target="_blank" 
+                                           style="display: inline-block; background: #0078d4; color: white; padding: 8px 16px; 
+                                                  text-decoration: none; border-radius: 4px; margin: 5px;">
+                                            👁️ View PDF Online
+                                        </a>
+                                    ` : ''}
+                                    
+                                    <a href="${file.convertedPdf.downloadUrl}" target="_blank" 
+                                       style="display: inline-block; background: #28a745; color: white; padding: 8px 16px; 
+                                              text-decoration: none; border-radius: 4px; margin: 5px;">
+                                        📥 Download PDF
+                                    </a>
+                                </div>
+                            </div>
+                        ` : ''}
+                        
+                        ${file.watermarkedPdf ? `
+                            <div style="margin: 15px 0; padding: 15px; background: #fff3cd; border-radius: 4px;">
+                                <h5>💧 Watermark Added!</h5>
+                                <p><strong>Watermarked PDF:</strong> ${file.filename.replace(/\.(pdf|docx|doc)$/i, '_watermarked.pdf')}</p>
+                                
+                                <div style="margin: 10px 0;">
+                                    ${file.watermarkedPdf.viewerUrl ? `
+                                        <a href="/viewer.html?token=${file.watermarkedPdf.token || ''}&sessionId=${file.watermarkedPdf.sessionId || ''}&documentUrl=${encodeURIComponent(file.watermarkedPdf.downloadUrl || '')}" target="_blank" 
+                                           style="display: inline-block; background: #0078d4; color: white; padding: 8px 16px; 
+                                                  text-decoration: none; border-radius: 4px; margin: 5px;">
+                                            👁️ View Watermarked PDF
+                                        </a>
+                                    ` : ''}
+                                    
+                                    <a href="${file.watermarkedPdf.downloadUrl}" target="_blank" 
+                                       style="display: inline-block; background: #28a745; color: white; padding: 8px 16px; 
+                                              text-decoration: none; border-radius: 4px; margin: 5px;">
+                                        📥 Download Watermarked PDF
+                                    </a>
+                                </div>
+                            </div>
+                        ` : ''}
+                        
+                        ${file.tables && file.tables.length > 0 ? `
+                            <div>
+                                <strong>Tables Found:</strong>
+                                <ul>
+                                    ${file.tables.map(table => `
+                                        <li>Table with ${table.headers.length} columns and ${table.rows.length} rows</li>
+                                    `).join('')}
+                                </ul>
+                            </div>
+                        ` : ''}
+                        
+                        ${file.keyValuePairs && Object.keys(file.keyValuePairs).length > 0 ? `
+                            <div>
+                                <strong>Key-Value Pairs:</strong>
+                                <ul>
+                                    ${Object.entries(file.keyValuePairs).map(([key, value]) => `
+                                        <li><strong>${key}:</strong> ${value}</li>
+                                    `).join('')}
+                                </ul>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+
+            results.innerHTML = html;
+        }
+
+        function displayError(message) {
+            const results = document.getElementById('results');
+            results.style.display = 'block';
+            results.innerHTML = `<div class="error">❌ ${message}</div>`;
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,32 @@
+{
+  "name": "nutrient-dws-api-server",
+  "version": "1.0.0",
+  "description": "Backend server for Nutrient DWS API integration",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "build": "echo 'No build step required'",
+    "test": "mocha tests/**/*.test.js --timeout 10000",
+    "test:unit": "mocha tests/unit/**/*.test.js",
+    "test:integration": "mocha tests/integration/**/*.test.js"
+  },
+  "dependencies": {
+    "axios": "^1.9.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.1.5",
+    "form-data": "^4.0.2",
+    "helmet": "^7.1.0",
+    "multer": "^1.4.5-lts.1"
+  },
+  "devDependencies": {
+    "chai": "^4.3.10",
+    "mocha": "^10.2.0",
+    "supertest": "^6.3.3",
+    "vercel": "^32.5.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

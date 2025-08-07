@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Viewer Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .viewer-frame {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            background: #0078d4;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #106ebe;
+        }
+        .url-display {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 3px;
+            font-family: monospace;
+            word-break: break-all;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Nutrient Viewer Test</h1>
+    
+    <div class="test-section">
+        <h2>Test Viewer URL</h2>
+        <p>This tests the viewer URL that should be returned by the API:</p>
+        
+        <div class="url-display" id="viewerUrl">
+            https://de.different-beaver.i1-eur1.m1.services.nutrient-powered.io/s/demo-session-id?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhbGxvd2VkX2RvY3VtZW50cyI6W3siZG9jdW1lbnRfaWQiOiI3S1FTMU0zWlhaUDFHN0JRRDFaRzhSS1BWMSIsInBlcm1pc3Npb25zIjpbInJlYWQiLCJ3cml0ZSIsImRvd25sb2FkIl19XSwiYWxsb3dlZF9vcGVyYXRpb25zIjpbImluc3RhbnQiLCJodG1sX2NvbnZlcnNpb25fYXBpIiwiZGF0YV9leHRyYWN0aW9uX2FwaSIsImNvbW1lbnRzIiwicmVkYWN0aW9uX2FwaSIsImltYWdlX2NvbnZlcnNpb24iLCJwZGZhX2FwaSIsIm1lYXN1cmVtZW50X3Rvb2xzIiwiaW1hZ2VfY29udmVyc2lvbl9hcGkiLCJjb250ZW50X2VkaXRpbmciLCJkb2N1bWVudF9lZGl0b3IiLCJlbGVjdHJvbmljX3NpZ25hdHVyZXMiLCJjYWRfY29udmVyc2lvbiIsImVsZWN0cm9uaWNfc2lnbmF0dXJlc19hcGkiLCJpbWFnZV9yZW5kZXJpbmdfYXBpIiwiY29tcHJlc3Npb25fYXBpIiwiZGF0YV9leHRyYWN0aW9uIiwiZG9jdW1lbnRfYXNzaXN0YW50IiwidXNlcl9pbnRlcmZhY2UiLCJmb3Jtc19jcmVhdG9yX2FwaSIsImNhZF9jb252ZXJzaW9uX2FwaSIsImxpbmVhcml6YXRpb25fYXBpIiwib2ZmaWNlX3RlbXBsYXRpbmdfYXBpIiwicGRmX3RvX29mZmljZV9jb252ZXJzaW9uIiwibWVhc3VyZW1lbnRfdG9vbHNfYXBpIiwib2ZmaWNlX2NvbnZlcnNpb25fYXBpIiwiZm9ybXMiLCJpbWFnZV9yZW5kZXJpbmciLCJvY3JfYXBpIiwib2ZmaWNlX2NvbnZlcnNpb24iLCJwZGZhIiwidmlld2VyIiwiZW1haWxfY29udmVyc2lvbl9hcGkiLCJjb21wcmVzc2lvbiIsImxpbmVhcml6YXRpb24iLCJjb21tZW50c19hcGkiLCJmb3Jtc19jcmVhdG9yIiwiaHRtbF9jb252ZXJzaW9uIiwiYW5ub3RhdGlvbnMiLCJvZmZpY2VfdGVtcGxhdGluZyIsIm9jciIsInBkZl90b19vZmZpY2VfY29udmVyc2lvbl9hcGkiLCJyZWRhY3Rpb24iLCJkb2N1bWVudF9lZGl0b3JfYXBpIiwiZW1haWxfY29udmVyc2lvbiIsImZvcm1zX2FwaSIsImFubm90YXRpb25zX2FwaSJdLCJhbGxvd2VkX29yaWdpbnMiOlsiXi4qJCJdLCJhdWQiOiJkb2N1bWVudC1lbmdpbmUiLCJleHAiOjE3NTQ2MzcwNTgsImlhdCI6MTc1NDU1MDY1OCwiaXNzIjoiaG9zdGVkLWZyb250ZW5kIiwianRpIjoiMzFjbWwxcGI1MzdoODNiMTVzMDA4bGNpIiwibmJmIjoxNzU0NTUwNjU4LCJzY29wZSI6ImZyb250ZW5kIiwic2VydmVyX3VybCI6Imh0dHBzOi8vZGUuZGlmZmVyZW50LWJlYXZlci5pMS1ldXIxLm0xLnNlcnZpY2VzLm51dHJpZW50LXBvd2VyZWQuaW8vIiwidGVuYW50X2lkIjoiN0tRWEUzOE5ETTFXRUM2Q0RLN0hUU1Y4RDciLCJ0ZW5hbnRfbGltaXRzIjp7ImRvY3VtZW50X2xpbWl0IjoyMCwic2hvd190cmlhbF93YXRlcm1hcmsiOnRydWUsInN0b3JhZ2Vfc2l6ZV9saW1pdCI6MTA0ODU3NjAwfSwidmVyc2lvbiI6IjIwMjUtMDMtMDEifQ.OYnZM6QKo6Ebpx8rqYjCTmR9S7U4HvFkEMq18I1KrPW5dM6AEf_e2exRneXCAZWIBoIZQMkXY24JYugcbAMvcnisD1K7WoYpkX1gzeO-rIWVwjCt1P-3huGnI7z5N3O5_P1JKkovz4_O6pzjKRclM2qp2Cx1fFlQiV-Fh-3aHKb2sA0cKUG64VNehF_lvfwW9sSGdW0ERhHsOTqluXEcWQM_c8adSbYfYSaUqQOp86gAbkSK0rtCJPocSfHr2G6I6avO6jf2G2s0uWRVxHQ2CANvtGu5fCpYbPWr8ggr5NJhtfLvGLMHlmMThh9Ri_eBFlS63gtVxmsE2iYIpCQqN5AsKvGfDxCK00rpc02Xj83ZS9vLliPPxYf7IJ-V8w-ZwWAsCIwp1Oh6docuEg6sXqSNVpIU8Ond4m7dI0Tx8OGp-Crte-oUAUy8pBGVnXe0RUS20TG-GETfpUXFj7GY8HBsaL0_VSNbThDMp57qHm7DCz54tU0U46gzJlnecDsqPh7DbZ9GPQ2dHoFNP-23nqPHSvlpUxDQa4xhvVidfjoPgdXZTJ71Th4jOTUkVzzMVwN5rcyXe5i4XdY25Usqw1u_r3dGNEXMGg-mFGaKxFprb_8_E8GppGHPnoVJgqcrZlIWYwAKxiiSVTSIR0PG6tywJuOA_S_WTZGKOxU-mxc
+        </div>
+        
+        <button onclick="loadViewer()">Load Viewer</button>
+        <button onclick="openInNewTab()">Open in New Tab</button>
+        
+        <iframe id="viewerFrame" class="viewer-frame" style="display: none;"></iframe>
+    </div>
+
+    <div class="test-section">
+        <h2>API Test</h2>
+        <p>Test the API to get a fresh viewer URL:</p>
+        <button onclick="testAPI()">Test API</button>
+        <div id="apiResult" class="url-display" style="display: none;"></div>
+    </div>
+
+    <script>
+        const viewerUrl = 'https://de.different-beaver.i1-eur1.m1.services.nutrient-powered.io/s/demo-session-id?token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhbGxvd2VkX2RvY3VtZW50cyI6W3siZG9jdW1lbnRfaWQiOiI3S1FTMU0zWlhaUDFHN0JRRDFaRzhSS1BWMSIsInBlcm1pc3Npb25zIjpbInJlYWQiLCJ3cml0ZSIsImRvd25sb2FkIl19XSwiYWxsb3dlZF9vcGVyYXRpb25zIjpbImluc3RhbnQiLCJodG1sX2NvbnZlcnNpb25fYXBpIiwiZGF0YV9leHRyYWN0aW9uX2FwaSIsImNvbW1lbnRzIiwicmVkYWN0aW9uX2FwaSIsImltYWdlX2NvbnZlcnNpb24iLCJwZGZhX2FwaSIsIm1lYXN1cmVtZW50X3Rvb2xzIiwiaW1hZ2VfY29udmVyc2lvbl9hcGkiLCJjb250ZW50X2VkaXRpbmciLCJkb2N1bWVudF9lZGl0b3IiLCJlbGVjdHJvbmljX3NpZ25hdHVyZXMiLCJjYWRfY29udmVyc2lvbiIsImVsZWN0cm9uaWNfc2lnbmF0dXJlc19hcGkiLCJpbWFnZV9yZW5kZXJpbmdfYXBpIiwiY29tcHJlc3Npb25fYXBpIiwiZGF0YV9leHRyYWN0aW9uIiwiZG9jdW1lbnRfYXNzaXN0YW50IiwidXNlcl9pbnRlcmZhY2UiLCJmb3Jtc19jcmVhdG9yX2FwaSIsImNhZF9jb252ZXJzaW9uX2FwaSIsImxpbmVhcml6YXRpb25fYXBpIiwib2ZmaWNlX3RlbXBsYXRpbmdfYXBpIiwicGRmX3RvX29mZmljZV9jb252ZXJzaW9uIiwibWVhc3VyZW1lbnRfdG9vbHNfYXBpIiwib2ZmaWNlX2NvbnZlcnNpb25fYXBpIiwiZm9ybXMiLCJpbWFnZV9yZW5kZXJpbmciLCJvY3JfYXBpIiwib2ZmaWNlX2NvbnZlcnNpb24iLCJwZGZhIiwidmlld2VyIiwiZW1haWxfY29udmVyc2lvbl9hcGkiLCJjb21wcmVzc2lvbiIsImxpbmVhcml6YXRpb24iLCJjb21tZW50c19hcGkiLCJmb3Jtc19jcmVhdG9yIiwiaHRtbF9jb252ZXJzaW9uIiwiYW5ub3RhdGlvbnMiLCJvZmZpY2VfdGVtcGxhdGluZyIsIm9jciIsInBkZl90b19vZmZpY2VfY29udmVyc2lvbl9hcGkiLCJyZWRhY3Rpb24iLCJkb2N1bWVudF9lZGl0b3JfYXBpIiwiZW1haWxfY29udmVyc2lvbiIsImZvcm1zX2FwaSIsImFubm90YXRpb25zX2FwaSJdLCJhbGxvd2VkX29yaWdpbnMiOlsiXi4qJCJdLCJhdWQiOiJkb2N1bWVudC1lbmdpbmUiLCJleHAiOjE3NTQ2MzcwNTgsImlhdCI6MTc1NDU1MDY1OCwiaXNzIjoiaG9zdGVkLWZyb250ZW5kIiwianRpIjoiMzFjbWwxcGI1MzdoODNiMTVzMDA4bGNpIiwibmJmIjoxNzU0NTUwNjU4LCJzY29wZSI6ImZyb250ZW5kIiwic2VydmVyX3VybCI6Imh0dHBzOi8vZGUuZGlmZmVyZW50LWJlYXZlci5pMS1ldXIxLm0xLnNlcnZpY2VzLm51dHJpZW50LXBvd2VyZWQuaW8vIiwidGVuYW50X2lkIjoiN0tRWEUzOE5ETTFXRUM2Q0RLN0hUU1Y4RDciLCJ0ZW5hbnRfbGltaXRzIjp7ImRvY3VtZW50X2xpbWl0IjoyMCwic2hvd190cmlhbF93YXRlcm1hcmsiOnRydWUsInN0b3JhZ2Vfc2l6ZV9saW1pdCI6MTA0ODU3NjAwfSwidmVyc2lvbiI6IjIwMjUtMDMtMDEifQ.OYnZM6QKo6Ebpx8rqYjCTmR9S7U4HvFkEMq18I1KrPW5dM6AEf_e2exRneXCAZWIBoIZQMkXY24JYugcbAMvcnisD1K7WoYpkX1gzeO-rIWVwjCt1P-3huGnI7z5N3O5_P1JKkovz4_O6pzjKRclM2qp2Cx1fFlQiV-Fh-3aHKb2sA0cKUG64VNehF_lvfwW9sSGdW0ERhHsOTqluXEcWQM_c8adSbYfYSaUqQOp86gAbkSK0rtCJPocSfHr2G6I6avO6jf2G2s0uWRVxHQ2CANvtGu5fCpYbPWr8ggr5NJhtfLvGLMHlmMThh9Ri_eBFlS63gtVxmsE2iYIpCQqN5AsKvGfDxCK00rpc02Xj83ZS9vLliPPxYf7IJ-V8w-ZwWAsCIwp1Oh6docuEg6sXqSNVpIU8Ond4m7dI0Tx8OGp-Crte-oUAUy8pBGVnXe0RUS20TG-GETfpUXFj7GY8HBsaL0_VSNbThDMp57qHm7DCz54tU0U46gzJlnecDsqPh7DbZ9GPQ2dHoFNP-23nqPHSvlpUxDQa4xhvVidfjoPgdXZTJ71Th4jOTUkVzzMVwN5rcyXe5i4XdY25Usqw1u_r3dGNEXMGg-mFGaKxFprb_8_E8GppGHPnoVJgqcrZlIWYwAKxiiSVTSIR0PG6tywJuOA_S_WTZGKOxU-mxc';
+
+        function loadViewer() {
+            const frame = document.getElementById('viewerFrame');
+            frame.src = viewerUrl;
+            frame.style.display = 'block';
+        }
+
+        function openInNewTab() {
+            window.open(viewerUrl, '_blank');
+        }
+
+        async function testAPI() {
+            const resultDiv = document.getElementById('apiResult');
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = 'Testing API...';
+
+            try {
+                // Create a simple test file
+                const testContent = 'This is a test document for viewer testing.';
+                const blob = new Blob([testContent], { type: 'text/plain' });
+                const file = new File([blob], 'test.txt', { type: 'text/plain' });
+
+                const formData = new FormData();
+                formData.append('files', file);
+                formData.append('operation', 'convert');
+
+                const response = await fetch('https://nutrient-dws-api.vercel.app/api/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+                
+                if (result.success && result.data.files[0].convertedPdf) {
+                    resultDiv.textContent = `API Success! Viewer URL: ${result.data.files[0].convertedPdf.viewerUrl}`;
+                } else {
+                    resultDiv.textContent = `API Error: ${JSON.stringify(result, null, 2)}`;
+                }
+            } catch (error) {
+                resultDiv.textContent = `Error: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html> 
