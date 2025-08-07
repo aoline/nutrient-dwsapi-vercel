@@ -3,15 +3,76 @@
  * See LICENSE in the project root for license information.
  */
 
+// Initialize the add-in when Office is ready
 Office.onReady((info) => {
+    console.log('Office.js loaded successfully');
+    
     if (info.host === Office.HostType.Word) {
-        document.getElementById('sideload-msg').style.display = 'none';
-        document.getElementById('app-body').style.display = 'flex';
-        document.getElementById('run').onclick = run;
+        console.log('Word host detected');
+        
+        // Hide sideload message if it exists
+        const sideloadMsg = document.getElementById('sideload-msg');
+        if (sideloadMsg) {
+            sideloadMsg.style.display = 'none';
+        }
+        
+        // Show app body if it exists
+        const appBody = document.getElementById('app-body');
+        if (appBody) {
+            appBody.style.display = 'flex';
+        }
+        
+        // Initialize the add-in
+        initializeAddIn();
+        
+        // Set up run button if it exists
+        const runButton = document.getElementById('run');
+        if (runButton) {
+            runButton.onclick = run;
+        }
+    } else {
+        console.log('Word host not detected, current host:', info.host);
     }
 });
 
-export async function run() {
+// Fallback initialization for Office.js
+if (typeof Office !== 'undefined') {
+    Office.onReady((info) => {
+        console.log('Office.js fallback initialization');
+        if (info.host === Office.HostType.Word) {
+            initializeAddIn();
+        }
+    });
+}
+
+function initializeAddIn() {
+    console.log('Nutrient.io Hello World Add-in initialized');
+    
+    try {
+        // Set up event listeners
+        const insertButton = document.getElementById('insertText');
+        const infoButton = document.getElementById('getDocumentInfo');
+        
+        if (insertButton) {
+            insertButton.addEventListener('click', insertHelloWorld);
+            console.log('Insert button listener added');
+        }
+        
+        if (infoButton) {
+            infoButton.addEventListener('click', getDocumentInfo);
+            console.log('Info button listener added');
+        }
+        
+        // Update status
+        updateStatus('Add-in loaded successfully!', 'success');
+        
+    } catch (error) {
+        console.error('Error initializing add-in:', error);
+        updateStatus('Error initializing add-in: ' + error.message, 'error');
+    }
+}
+
+async function run() {
     return Word.run(async (context) => {
         /**
          * Insert your Word code here
@@ -25,24 +86,6 @@ export async function run() {
 
         await context.sync();
     });
-}
-
-// Initialize the add-in when Office is ready
-Office.onReady((info) => {
-    if (info.host === Office.HostType.Word) {
-        initializeAddIn();
-    }
-});
-
-function initializeAddIn() {
-    console.log('Nutrient.io Hello World Add-in initialized');
-    
-    // Set up event listeners
-    document.getElementById('insertText').addEventListener('click', insertHelloWorld);
-    document.getElementById('getDocumentInfo').addEventListener('click', getDocumentInfo);
-    
-    // Update status
-    updateStatus('Add-in loaded successfully!', 'success');
 }
 
 async function insertHelloWorld() {
@@ -90,14 +133,16 @@ async function getDocumentInfo() {
             
             // Display document information
             const documentInfo = document.getElementById('documentInfo');
-            documentInfo.innerHTML = `
-                <p><strong>Document Title:</strong> ${title}</p>
-                <p><strong>Word Count:</strong> ${wordCount}</p>
-                <p><strong>Character Count:</strong> ${charCount}</p>
-                <p><strong>Selected Text:</strong> "${selectedText}"</p>
-                <p><strong>Add-in Version:</strong> 1.0.0</p>
-                <p><strong>Powered by:</strong> Nutrient.io</p>
-            `;
+            if (documentInfo) {
+                documentInfo.innerHTML = `
+                    <p><strong>Document Title:</strong> ${title}</p>
+                    <p><strong>Word Count:</strong> ${wordCount}</p>
+                    <p><strong>Character Count:</strong> ${charCount}</p>
+                    <p><strong>Selected Text:</strong> "${selectedText}"</p>
+                    <p><strong>Add-in Version:</strong> 1.0.0</p>
+                    <p><strong>Powered by:</strong> Nutrient.io</p>
+                `;
+            }
         });
         
         updateStatus('Document info retrieved!', 'success');
@@ -108,17 +153,28 @@ async function getDocumentInfo() {
         
         // Show fallback info
         const documentInfo = document.getElementById('documentInfo');
-        documentInfo.innerHTML = `
-            <p><strong>Error:</strong> Could not retrieve document information</p>
-            <p><strong>Add-in Version:</strong> 1.0.0</p>
-            <p><strong>Powered by:</strong> Nutrient.io</p>
-        `;
+        if (documentInfo) {
+            documentInfo.innerHTML = `
+                <p><strong>Error:</strong> Could not retrieve document information</p>
+                <p><strong>Add-in Version:</strong> 1.0.0</p>
+                <p><strong>Powered by:</strong> Nutrient.io</p>
+            `;
+        }
     }
 }
 
 function updateStatus(message, type = 'info') {
     const statusElement = document.getElementById('status');
+    if (!statusElement) {
+        console.log('Status element not found');
+        return;
+    }
+    
     const statusContent = statusElement.querySelector('.status-content');
+    if (!statusContent) {
+        console.log('Status content not found');
+        return;
+    }
     
     // Remove existing classes
     statusContent.className = 'status-content';
@@ -145,6 +201,8 @@ function updateStatus(message, type = 'info') {
 
 // Add some fun interactions
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM loaded, setting up interactions');
+    
     // Add click animation to buttons
     const buttons = document.querySelectorAll('.ms-Button');
     buttons.forEach(button => {
