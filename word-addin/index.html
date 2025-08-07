@@ -162,6 +162,12 @@
             });
         }
         
+        // Force show app body after a short delay regardless of Office.js
+        function forceShowAppBody() {
+            console.log('🔧 Force showing app body...');
+            showAppBody();
+        }
+        
         // Wait for Office.js to be fully loaded
         function initializeOffice() {
             if (typeof Office !== 'undefined' && Office.onReady) {
@@ -186,14 +192,20 @@
             initializeOffice();
         }
         
-        // Fallback: Show app body after a reasonable timeout
+        // Multiple fallbacks to ensure app body is shown
         setTimeout(() => {
+            console.log('⏰ First fallback timeout - checking app body');
             const appBody = document.getElementById('app-body');
             if (appBody && appBody.style.display === 'none') {
-                console.log('⏰ Fallback timeout - showing app body');
-                showAppBody();
+                console.log('🔧 First fallback - showing app body');
+                forceShowAppBody();
             }
-        }, 5000);
+        }, 2000);
+        
+        setTimeout(() => {
+            console.log('⏰ Second fallback timeout - forcing app body');
+            forceShowAppBody();
+        }, 4000);
         
         // Immediate version logging
         console.log('🔍 Current page state:', {
@@ -202,6 +214,11 @@
             hasOfficeOnReady: typeof Office !== 'undefined' && Office.onReady,
             version: '1.0.1.0'
         });
+        
+        // Force version display immediately
+        setTimeout(() => {
+            updateVersionTime();
+        }, 100);
     </script>
 </body>
 </html> 
