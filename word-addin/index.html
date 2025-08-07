@@ -24,6 +24,13 @@
         </header>
         <section id="sideload-msg" class="ms-welcome__main">
             <h2 class="ms-font-xl">Please sideload your add-in to see app body.</h2>
+            <div style="text-align: center; margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                <h3 style="color: #fff; margin: 0 0 10px 0;">🔧 Debug Information</h3>
+                <p style="color: #fff; margin: 5px 0; font-size: 14px;"><strong>Version:</strong> 1.0.1.0</p>
+                <p style="color: #fff; margin: 5px 0; font-size: 14px;"><strong>Build Date:</strong> <span id="buildDate"></span></p>
+                <p style="color: #fff; margin: 5px 0; font-size: 14px;"><strong>Office.js Status:</strong> <span id="officeStatus">Checking...</span></p>
+                <p style="color: #fff; margin: 5px 0; font-size: 14px;"><strong>URL:</strong> <span id="currentUrl"></span></p>
+            </div>
         </section>
         <main id="app-body" class="ms-welcome__main" style="display: none;">
             <div class="ms-welcome__features">
@@ -119,6 +126,24 @@
         console.log('🚀 Starting Office.js initialization...');
         console.log('📋 Version: 1.0.1.0 - Build Date:', new Date().toISOString());
         
+        // Populate debug information immediately
+        function populateDebugInfo() {
+            const buildDate = document.getElementById('buildDate');
+            const officeStatus = document.getElementById('officeStatus');
+            const currentUrl = document.getElementById('currentUrl');
+            
+            if (buildDate) buildDate.textContent = new Date().toLocaleString();
+            if (currentUrl) currentUrl.textContent = window.location.href;
+            
+            if (typeof Office !== 'undefined') {
+                if (officeStatus) officeStatus.textContent = 'Available';
+                console.log('✅ Office.js is available');
+            } else {
+                if (officeStatus) officeStatus.textContent = 'Not Available (Browser Mode)';
+                console.log('⚠️ Office.js not available - running in browser mode');
+            }
+        }
+        
         // Display current time for version tracking
         function updateVersionTime() {
             const updateTimeElement = document.getElementById('updateTime');
@@ -186,9 +211,13 @@
         // Start initialization when DOM is ready
         if (document.readyState === 'loading') {
             console.log('📄 DOM loading, waiting for DOMContentLoaded');
-            document.addEventListener('DOMContentLoaded', initializeOffice);
+            document.addEventListener('DOMContentLoaded', () => {
+                populateDebugInfo();
+                initializeOffice();
+            });
         } else {
             console.log('📄 DOM already loaded, initializing immediately');
+            populateDebugInfo();
             initializeOffice();
         }
         
@@ -218,6 +247,7 @@
         // Force version display immediately
         setTimeout(() => {
             updateVersionTime();
+            populateDebugInfo();
         }, 100);
     </script>
 </body>
