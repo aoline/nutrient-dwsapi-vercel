@@ -116,7 +116,8 @@
     
     <!-- Office.js initialization - Load last -->
     <script>
-        console.log('Starting Office.js initialization...');
+        console.log('🚀 Starting Office.js initialization...');
+        console.log('📋 Version: 1.0.1.0 - Build Date:', new Date().toISOString());
         
         // Display current time for version tracking
         function updateVersionTime() {
@@ -124,38 +125,53 @@
             if (updateTimeElement) {
                 const now = new Date();
                 updateTimeElement.textContent = now.toLocaleString();
+                console.log('⏰ Version time updated:', now.toLocaleString());
+            } else {
+                console.log('⚠️ Update time element not found');
             }
         }
         
         function showAppBody() {
-            console.log('Showing app body...');
+            console.log('🎯 Showing app body...');
             const sideloadMsg = document.getElementById('sideload-msg');
             const appBody = document.getElementById('app-body');
             
             if (sideloadMsg) {
                 sideloadMsg.style.display = 'none';
                 console.log('✅ Sideload message hidden');
+            } else {
+                console.log('⚠️ Sideload message element not found');
             }
             
             if (appBody) {
                 appBody.style.display = 'block';
                 console.log('✅ App body shown');
+            } else {
+                console.log('⚠️ App body element not found');
             }
             
             // Update version time when app body is shown
             updateVersionTime();
+            
+            // Log version info to console
+            console.log('🎨 UI Version Display:', {
+                version: '1.0.1.0',
+                timestamp: new Date().toLocaleString(),
+                userAgent: navigator.userAgent,
+                url: window.location.href
+            });
         }
         
         // Wait for Office.js to be fully loaded
         function initializeOffice() {
             if (typeof Office !== 'undefined' && Office.onReady) {
-                console.log('Office.js detected, calling Office.onReady');
+                console.log('✅ Office.js detected, calling Office.onReady');
                 Office.onReady((info) => {
-                    console.log('Office.js loaded successfully:', info.host);
+                    console.log('🎉 Office.js loaded successfully:', info.host);
                     showAppBody();
                 });
             } else {
-                console.log('Office.js not ready yet, waiting...');
+                console.log('⏳ Office.js not ready yet, waiting...');
                 // Wait a bit more and try again
                 setTimeout(initializeOffice, 100);
             }
@@ -163,9 +179,10 @@
         
         // Start initialization when DOM is ready
         if (document.readyState === 'loading') {
+            console.log('📄 DOM loading, waiting for DOMContentLoaded');
             document.addEventListener('DOMContentLoaded', initializeOffice);
         } else {
-            // DOM is already loaded
+            console.log('📄 DOM already loaded, initializing immediately');
             initializeOffice();
         }
         
@@ -173,10 +190,18 @@
         setTimeout(() => {
             const appBody = document.getElementById('app-body');
             if (appBody && appBody.style.display === 'none') {
-                console.log('Fallback timeout - showing app body');
+                console.log('⏰ Fallback timeout - showing app body');
                 showAppBody();
             }
         }, 5000);
+        
+        // Immediate version logging
+        console.log('🔍 Current page state:', {
+            readyState: document.readyState,
+            hasOffice: typeof Office !== 'undefined',
+            hasOfficeOnReady: typeof Office !== 'undefined' && Office.onReady,
+            version: '1.0.1.0'
+        });
     </script>
 </body>
 </html> 
