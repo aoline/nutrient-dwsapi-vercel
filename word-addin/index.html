@@ -109,43 +109,80 @@
     <!-- Add-in JavaScript -->
     <script src="app.js"></script>
     
-    <!-- Fallback Office.js initialization -->
+    <!-- Immediate Office.js initialization -->
     <script>
-        // Immediate fallback initialization
-        if (typeof Office !== 'undefined') {
-            Office.onReady((info) => {
-                console.log('Office.js fallback initialization from HTML');
-                if (info.host === Office.HostType.Word) {
-                    const sideloadMsg = document.getElementById('sideload-msg');
-                    const appBody = document.getElementById('app-body');
-                    
-                    if (sideloadMsg) {
-                        sideloadMsg.style.display = 'none';
-                        console.log('Sideload message hidden (HTML fallback)');
-                    }
-                    
-                    if (appBody) {
-                        appBody.style.display = 'block';
-                        console.log('App body shown (HTML fallback)');
-                    }
-                }
-            });
+        console.log('Starting Office.js initialization...');
+        
+        // Function to hide sideload message and show app body
+        function initializeAddIn() {
+            console.log('Initializing add-in...');
+            const sideloadMsg = document.getElementById('sideload-msg');
+            const appBody = document.getElementById('app-body');
+            
+            if (sideloadMsg) {
+                sideloadMsg.style.display = 'none';
+                console.log('✅ Sideload message hidden');
+            }
+            
+            if (appBody) {
+                appBody.style.display = 'block';
+                console.log('✅ App body shown');
+            }
         }
         
-        // Additional fallback for immediate execution
+        // Method 1: Office.onReady (primary method)
+        if (typeof Office !== 'undefined') {
+            console.log('Office.js detected, using Office.onReady');
+            Office.onReady((info) => {
+                console.log('Office.js loaded successfully:', info.host);
+                if (info.host === Office.HostType.Word) {
+                    initializeAddIn();
+                } else {
+                    console.log('Not Word host, but initializing anyway');
+                    initializeAddIn();
+                }
+            });
+        } else {
+            console.log('Office.js not detected, waiting...');
+        }
+        
+        // Method 2: DOMContentLoaded fallback
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('DOM loaded, checking Office.js status (HTML fallback)');
+            console.log('DOM loaded, checking Office.js status');
             
             // If Office.js is already loaded, initialize immediately
-            if (typeof Office !== 'undefined' && Office.context) {
-                console.log('Office.js already available, initializing (HTML fallback)');
-                const sideloadMsg = document.getElementById('sideload-msg');
-                const appBody = document.getElementById('app-body');
-                
-                if (sideloadMsg) sideloadMsg.style.display = 'none';
-                if (appBody) appBody.style.display = 'block';
+            if (typeof Office !== 'undefined') {
+                console.log('Office.js available on DOMContentLoaded');
+                if (Office.context) {
+                    initializeAddIn();
+                } else {
+                    // Wait a bit more for Office.js to fully load
+                    setTimeout(() => {
+                        if (typeof Office !== 'undefined' && Office.context) {
+                            initializeAddIn();
+                        } else {
+                            console.log('Office.js still not ready, initializing anyway');
+                            initializeAddIn();
+                        }
+                    }, 1000);
+                }
+            } else {
+                console.log('Office.js not available, initializing anyway');
+                initializeAddIn();
             }
         });
+        
+        // Method 3: Immediate fallback (if Office.js is already loaded)
+        if (typeof Office !== 'undefined' && Office.context) {
+            console.log('Office.js already available, initializing immediately');
+            initializeAddIn();
+        }
+        
+        // Method 4: Timeout fallback (last resort)
+        setTimeout(() => {
+            console.log('Timeout fallback - initializing add-in');
+            initializeAddIn();
+        }, 2000);
     </script>
 </body>
 </html> 

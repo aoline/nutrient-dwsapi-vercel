@@ -1,64 +1,78 @@
 // Initialize the add-in when Office is ready
-// FIXED: Added proper Office.js initialization with fallbacks and error handling
-Office.onReady((info) => {
-    console.log('Office.js loaded successfully');
+// FIXED: Simplified Office.js initialization to avoid conflicts
+(function() {
+    console.log('App.js loaded, checking Office.js status');
     
-    if (info.host === Office.HostType.Word) {
-        console.log('Word host detected');
-        
-        // Hide sideload message and show app body
+    function initializeAddIn() {
+        console.log('Initializing WordAddIn...');
+        try {
+            window.wordAddIn = new WordAddIn();
+            console.log('WordAddIn initialized successfully');
+        } catch (error) {
+            console.error('Error initializing WordAddIn:', error);
+        }
+    }
+    
+    function showAppBody() {
+        console.log('Showing app body...');
         const sideloadMsg = document.getElementById('sideload-msg');
         const appBody = document.getElementById('app-body');
         
         if (sideloadMsg) {
             sideloadMsg.style.display = 'none';
-            console.log('Sideload message hidden');
+            console.log('✅ Sideload message hidden');
         }
         
         if (appBody) {
             appBody.style.display = 'block';
-            console.log('App body shown');
+            console.log('✅ App body shown');
         }
-        
-        // Initialize the add-in
-        initializeAddIn();
-    } else {
-        console.log('Word host not detected, current host:', info.host);
     }
-});
-
-// Fallback initialization for Office.js
-if (typeof Office !== 'undefined') {
-    Office.onReady((info) => {
-        console.log('Office.js fallback initialization');
-        if (info.host === Office.HostType.Word) {
-            const sideloadMsg = document.getElementById('sideload-msg');
-            const appBody = document.getElementById('app-body');
-            
-            if (sideloadMsg) sideloadMsg.style.display = 'none';
-            if (appBody) appBody.style.display = 'block';
-            
+    
+    // Method 1: Office.onReady (primary method)
+    if (typeof Office !== 'undefined') {
+        console.log('Office.js detected, using Office.onReady');
+        Office.onReady((info) => {
+            console.log('Office.js loaded successfully:', info.host);
+            showAppBody();
             initializeAddIn();
+        });
+    } else {
+        console.log('Office.js not detected, will wait for it');
+    }
+    
+    // Method 2: DOMContentLoaded fallback
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('DOM loaded, checking Office.js status');
+        
+        if (typeof Office !== 'undefined') {
+            console.log('Office.js available on DOMContentLoaded');
+            showAppBody();
+            initializeAddIn();
+        } else {
+            console.log('Office.js not available on DOMContentLoaded, waiting...');
+            // Wait a bit more for Office.js to load
+            setTimeout(() => {
+                if (typeof Office !== 'undefined') {
+                    console.log('Office.js loaded after timeout');
+                    showAppBody();
+                    initializeAddIn();
+                } else {
+                    console.log('Office.js still not available, showing app anyway');
+                    showAppBody();
+                    initializeAddIn();
+                }
+            }, 1000);
         }
     });
-}
-
-// Additional fallback for immediate execution
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM loaded, checking Office.js status');
     
-    // If Office.js is already loaded, initialize immediately
-    if (typeof Office !== 'undefined' && Office.context) {
-        console.log('Office.js already available, initializing');
-        const sideloadMsg = document.getElementById('sideload-msg');
-        const appBody = document.getElementById('app-body');
-        
-        if (sideloadMsg) sideloadMsg.style.display = 'none';
-        if (appBody) appBody.style.display = 'block';
-        
+    // Method 3: Timeout fallback (last resort)
+    setTimeout(() => {
+        console.log('Timeout fallback - showing app body');
+        showAppBody();
         initializeAddIn();
-    }
-});
+    }, 3000);
+})();
 
 class WordAddIn {
     constructor() {
@@ -435,8 +449,4 @@ class WordAddIn {
             </div>
         `;
     }
-}
-
-function initializeAddIn() {
-    window.wordAddIn = new WordAddIn();
 } 
