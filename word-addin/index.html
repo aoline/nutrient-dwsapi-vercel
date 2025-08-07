@@ -105,5 +105,47 @@
             </div>
         </main>
     </div>
+
+    <!-- Add-in JavaScript -->
+    <script src="app.js"></script>
+    
+    <!-- Fallback Office.js initialization -->
+    <script>
+        // Immediate fallback initialization
+        if (typeof Office !== 'undefined') {
+            Office.onReady((info) => {
+                console.log('Office.js fallback initialization from HTML');
+                if (info.host === Office.HostType.Word) {
+                    const sideloadMsg = document.getElementById('sideload-msg');
+                    const appBody = document.getElementById('app-body');
+                    
+                    if (sideloadMsg) {
+                        sideloadMsg.style.display = 'none';
+                        console.log('Sideload message hidden (HTML fallback)');
+                    }
+                    
+                    if (appBody) {
+                        appBody.style.display = 'block';
+                        console.log('App body shown (HTML fallback)');
+                    }
+                }
+            });
+        }
+        
+        // Additional fallback for immediate execution
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM loaded, checking Office.js status (HTML fallback)');
+            
+            // If Office.js is already loaded, initialize immediately
+            if (typeof Office !== 'undefined' && Office.context) {
+                console.log('Office.js already available, initializing (HTML fallback)');
+                const sideloadMsg = document.getElementById('sideload-msg');
+                const appBody = document.getElementById('app-body');
+                
+                if (sideloadMsg) sideloadMsg.style.display = 'none';
+                if (appBody) appBody.style.display = 'block';
+            }
+        });
+    </script>
 </body>
 </html> 
