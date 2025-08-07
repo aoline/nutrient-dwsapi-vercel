@@ -6,9 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Nutrient Document Processor</title>
 
-    <!-- Office JavaScript API -->
-    <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1.1/hosted/office.js"></script>
-
     <!-- For more information on Fluent UI, visit https://developer.microsoft.com/fluentui -->
     <link rel="stylesheet" href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-core/11.0.0/css/fabric.min.css"/>
 
@@ -106,10 +103,15 @@
         </main>
     </div>
 
-    <!-- Add-in JavaScript -->
+    <!-- Load all JavaScript at the end of the page for better performance -->
+    
+    <!-- Office JavaScript API - Load first -->
+    <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1.1/hosted/office.js"></script>
+    
+    <!-- Add-in JavaScript - Load after Office.js -->
     <script src="app.js"></script>
     
-    <!-- Simplified Office.js initialization -->
+    <!-- Office.js initialization - Load last -->
     <script>
         console.log('Starting Office.js initialization...');
         
