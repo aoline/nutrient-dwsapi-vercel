@@ -1,7 +1,7 @@
 // Initialize the add-in when Office is ready
-// FIXED: Simplified Office.js initialization to avoid conflicts
+// FIXED: Simplified to avoid conflicts with HTML initialization
 (function() {
-    console.log('App.js loaded, checking Office.js status');
+    console.log('App.js loaded, waiting for Office.js...');
     
     function initializeAddIn() {
         console.log('Initializing WordAddIn...');
@@ -14,33 +14,21 @@
     }
     
     // Wait for Office.js to be ready, then initialize the add-in
-    if (typeof Office !== 'undefined') {
-        console.log('Office.js detected in app.js, using Office.onReady');
-        Office.onReady((info) => {
-            console.log('Office.js loaded successfully in app.js:', info.host);
-            initializeAddIn();
-        });
-    } else {
-        console.log('Office.js not detected in app.js, waiting...');
-        // Wait for Office.js to load
-        let attempts = 0;
-        const maxAttempts = 10;
-        const checkOffice = setInterval(() => {
-            attempts++;
-            if (typeof Office !== 'undefined') {
-                console.log('Office.js detected in app.js after', attempts, 'attempts');
-                clearInterval(checkOffice);
-                Office.onReady((info) => {
-                    console.log('Office.js loaded successfully in app.js:', info.host);
-                    initializeAddIn();
-                });
-            } else if (attempts >= maxAttempts) {
-                console.log('Office.js not available in app.js after', maxAttempts, 'attempts, initializing anyway');
-                clearInterval(checkOffice);
+    function waitForOffice() {
+        if (typeof Office !== 'undefined' && Office.onReady) {
+            console.log('Office.js detected in app.js, using Office.onReady');
+            Office.onReady((info) => {
+                console.log('Office.js loaded successfully in app.js:', info.host);
                 initializeAddIn();
-            }
-        }, 500);
+            });
+        } else {
+            console.log('Office.js not ready in app.js, waiting...');
+            setTimeout(waitForOffice, 200);
+        }
     }
+    
+    // Start waiting for Office.js
+    waitForOffice();
     
     // Fallback: Initialize after a reasonable timeout
     setTimeout(() => {
@@ -48,7 +36,7 @@
             console.log('Fallback timeout in app.js - initializing WordAddIn');
             initializeAddIn();
         }
-    }, 3000);
+    }, 5000);
 })();
 
 class WordAddIn {
