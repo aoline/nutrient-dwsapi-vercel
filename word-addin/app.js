@@ -13,64 +13,41 @@
         }
     }
     
-    function showAppBody() {
-        console.log('Showing app body...');
-        const sideloadMsg = document.getElementById('sideload-msg');
-        const appBody = document.getElementById('app-body');
-        
-        if (sideloadMsg) {
-            sideloadMsg.style.display = 'none';
-            console.log('✅ Sideload message hidden');
-        }
-        
-        if (appBody) {
-            appBody.style.display = 'block';
-            console.log('✅ App body shown');
-        }
-    }
-    
-    // Method 1: Office.onReady (primary method)
+    // Wait for Office.js to be ready, then initialize the add-in
     if (typeof Office !== 'undefined') {
-        console.log('Office.js detected, using Office.onReady');
+        console.log('Office.js detected in app.js, using Office.onReady');
         Office.onReady((info) => {
-            console.log('Office.js loaded successfully:', info.host);
-            showAppBody();
+            console.log('Office.js loaded successfully in app.js:', info.host);
             initializeAddIn();
         });
     } else {
-        console.log('Office.js not detected, will wait for it');
+        console.log('Office.js not detected in app.js, waiting...');
+        // Wait for Office.js to load
+        let attempts = 0;
+        const maxAttempts = 10;
+        const checkOffice = setInterval(() => {
+            attempts++;
+            if (typeof Office !== 'undefined') {
+                console.log('Office.js detected in app.js after', attempts, 'attempts');
+                clearInterval(checkOffice);
+                Office.onReady((info) => {
+                    console.log('Office.js loaded successfully in app.js:', info.host);
+                    initializeAddIn();
+                });
+            } else if (attempts >= maxAttempts) {
+                console.log('Office.js not available in app.js after', maxAttempts, 'attempts, initializing anyway');
+                clearInterval(checkOffice);
+                initializeAddIn();
+            }
+        }, 500);
     }
     
-    // Method 2: DOMContentLoaded fallback
-    document.addEventListener('DOMContentLoaded', () => {
-        console.log('DOM loaded, checking Office.js status');
-        
-        if (typeof Office !== 'undefined') {
-            console.log('Office.js available on DOMContentLoaded');
-            showAppBody();
-            initializeAddIn();
-        } else {
-            console.log('Office.js not available on DOMContentLoaded, waiting...');
-            // Wait a bit more for Office.js to load
-            setTimeout(() => {
-                if (typeof Office !== 'undefined') {
-                    console.log('Office.js loaded after timeout');
-                    showAppBody();
-                    initializeAddIn();
-                } else {
-                    console.log('Office.js still not available, showing app anyway');
-                    showAppBody();
-                    initializeAddIn();
-                }
-            }, 1000);
-        }
-    });
-    
-    // Method 3: Timeout fallback (last resort)
+    // Fallback: Initialize after a reasonable timeout
     setTimeout(() => {
-        console.log('Timeout fallback - showing app body');
-        showAppBody();
-        initializeAddIn();
+        if (!window.wordAddIn) {
+            console.log('Fallback timeout in app.js - initializing WordAddIn');
+            initializeAddIn();
+        }
     }, 3000);
 })();
 

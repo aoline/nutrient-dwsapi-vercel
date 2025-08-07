@@ -109,13 +109,12 @@
     <!-- Add-in JavaScript -->
     <script src="app.js"></script>
     
-    <!-- Immediate Office.js initialization -->
+    <!-- Simplified Office.js initialization -->
     <script>
         console.log('Starting Office.js initialization...');
         
-        // Function to hide sideload message and show app body
-        function initializeAddIn() {
-            console.log('Initializing add-in...');
+        function showAppBody() {
+            console.log('Showing app body...');
             const sideloadMsg = document.getElementById('sideload-msg');
             const appBody = document.getElementById('app-body');
             
@@ -130,59 +129,43 @@
             }
         }
         
-        // Method 1: Office.onReady (primary method)
+        // Primary method: Office.onReady
         if (typeof Office !== 'undefined') {
             console.log('Office.js detected, using Office.onReady');
             Office.onReady((info) => {
                 console.log('Office.js loaded successfully:', info.host);
-                if (info.host === Office.HostType.Word) {
-                    initializeAddIn();
-                } else {
-                    console.log('Not Word host, but initializing anyway');
-                    initializeAddIn();
-                }
+                showAppBody();
             });
         } else {
-            console.log('Office.js not detected, waiting...');
-        }
-        
-        // Method 2: DOMContentLoaded fallback
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('DOM loaded, checking Office.js status');
-            
-            // If Office.js is already loaded, initialize immediately
-            if (typeof Office !== 'undefined') {
-                console.log('Office.js available on DOMContentLoaded');
-                if (Office.context) {
-                    initializeAddIn();
-                } else {
-                    // Wait a bit more for Office.js to fully load
-                    setTimeout(() => {
-                        if (typeof Office !== 'undefined' && Office.context) {
-                            initializeAddIn();
-                        } else {
-                            console.log('Office.js still not ready, initializing anyway');
-                            initializeAddIn();
-                        }
-                    }, 1000);
+            console.log('Office.js not detected, will wait for it');
+            // Wait for Office.js to load
+            let attempts = 0;
+            const maxAttempts = 10;
+            const checkOffice = setInterval(() => {
+                attempts++;
+                if (typeof Office !== 'undefined') {
+                    console.log('Office.js detected after', attempts, 'attempts');
+                    clearInterval(checkOffice);
+                    Office.onReady((info) => {
+                        console.log('Office.js loaded successfully:', info.host);
+                        showAppBody();
+                    });
+                } else if (attempts >= maxAttempts) {
+                    console.log('Office.js not available after', maxAttempts, 'attempts, showing app anyway');
+                    clearInterval(checkOffice);
+                    showAppBody();
                 }
-            } else {
-                console.log('Office.js not available, initializing anyway');
-                initializeAddIn();
-            }
-        });
-        
-        // Method 3: Immediate fallback (if Office.js is already loaded)
-        if (typeof Office !== 'undefined' && Office.context) {
-            console.log('Office.js already available, initializing immediately');
-            initializeAddIn();
+            }, 500);
         }
         
-        // Method 4: Timeout fallback (last resort)
+        // Fallback: Show app body after a reasonable timeout
         setTimeout(() => {
-            console.log('Timeout fallback - initializing add-in');
-            initializeAddIn();
-        }, 2000);
+            const appBody = document.getElementById('app-body');
+            if (appBody && appBody.style.display === 'none') {
+                console.log('Fallback timeout - showing app body');
+                showAppBody();
+            }
+        }, 3000);
     </script>
 </body>
 </html> 
