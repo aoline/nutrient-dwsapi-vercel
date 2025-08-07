@@ -1,4 +1,5 @@
 // Initialize the add-in when Office is ready
+// FIXED: Added proper Office.js initialization with fallbacks and error handling
 Office.onReady((info) => {
     console.log('Office.js loaded successfully');
     
