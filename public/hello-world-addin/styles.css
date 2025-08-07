@@ -1,0 +1,251 @@
+/* Nutrient.io Hello World Add-in Styles */
+
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.ms-welcome {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+#container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    max-width: 400px;
+    margin: 0 auto;
+    background: white;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Header */
+.ms-welcome__header {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    padding: 20px;
+    text-align: center;
+    border-radius: 0 0 15px 15px;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.nutrient-logo {
+    font-size: 2.5em;
+    margin-right: 10px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.ms-welcome__header h1 {
+    margin: 0;
+    font-weight: 600;
+    color: white;
+}
+
+.ms-welcome__header h2 {
+    margin: 5px 0 0 0;
+    font-weight: 400;
+    opacity: 0.9;
+}
+
+/* Main Content */
+.ms-welcome__main {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.welcome-card {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+    border: 1px solid #e9ecef;
+}
+
+.welcome-icon {
+    font-size: 3em;
+    margin-bottom: 15px;
+}
+
+.welcome-card h3 {
+    margin: 0 0 10px 0;
+    color: #333;
+}
+
+.welcome-card p {
+    margin: 0 0 20px 0;
+    color: #666;
+}
+
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.ms-Button {
+    border: none;
+    border-radius: 6px;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.ms-Button--primary {
+    background: #28a745;
+    color: white;
+}
+
+.ms-Button--primary:hover {
+    background: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.ms-Button--secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.ms-Button--secondary:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+}
+
+.ms-Button-label {
+    font-weight: 500;
+}
+
+/* Info Cards */
+.info-card, .status-card {
+    background: white;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.info-card h4, .status-card h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-weight: 600;
+}
+
+.info-content, .status-content {
+    color: #666;
+    font-size: 14px;
+}
+
+.info-content p, .status-content p {
+    margin: 5px 0;
+}
+
+/* Footer */
+.ms-welcome__footer {
+    background: #f8f9fa;
+    padding: 15px 20px;
+    text-align: center;
+    border-top: 1px solid #e9ecef;
+    border-radius: 15px 15px 0 0;
+}
+
+.ms-welcome__footer p {
+    margin: 0;
+    color: #666;
+}
+
+.ms-welcome__footer a {
+    color: #28a745;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.ms-welcome__footer a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+    #container {
+        max-width: 100%;
+        border-radius: 0;
+    }
+    
+    .ms-welcome__header {
+        border-radius: 0;
+    }
+    
+    .ms-welcome__footer {
+        border-radius: 0;
+    }
+}
+
+/* Loading States */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #28a745;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Success/Error States */
+.success {
+    color: #28a745;
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    border-radius: 4px;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+.error {
+    color: #dc3545;
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+    padding: 10px;
+    margin: 10px 0;
+} 

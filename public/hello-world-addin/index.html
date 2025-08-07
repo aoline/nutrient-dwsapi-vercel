@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Nutrient.io Hello World</title>
+
+    <!-- Office JavaScript API -->
+    <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1.1/hosted/office.js"></script>
+
+    <!-- For more information on Fluent UI, visit https://developer.microsoft.com/fluentui -->
+    <link rel="stylesheet" href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-core/11.0.0/css/fabric.min.css"/>
+
+    <!-- Template styles -->
+    <link href="styles.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body class="ms-font-m ms-welcome">
+    <div id="container">
+        <header class="ms-welcome__header">
+            <div class="logo-container">
+                <div class="nutrient-logo">🌿</div>
+                <h1 class="ms-font-xl">Nutrient.io</h1>
+            </div>
+            <h2 class="ms-font-l">Hello World Add-in</h2>
+        </header>
+
+        <main class="ms-welcome__main">
+            <div class="welcome-card">
+                <div class="welcome-icon">👋</div>
+                <h3 class="ms-font-l">Welcome to Nutrient.io!</h3>
+                <p class="ms-font-m">This is a simple Hello World Office add-in.</p>
+                
+                <div class="action-buttons">
+                    <button class="ms-Button ms-Button--primary" id="insertText">
+                        <span class="ms-Button-label">Insert Hello World</span>
+                    </button>
+                    
+                    <button class="ms-Button ms-Button--secondary" id="getDocumentInfo">
+                        <span class="ms-Button-label">Get Document Info</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <h4 class="ms-font-m">Document Information</h4>
+                <div id="documentInfo" class="info-content">
+                    <p>Click "Get Document Info" to see document details.</p>
+                </div>
+            </div>
+
+            <div class="status-card">
+                <h4 class="ms-font-m">Status</h4>
+                <div id="status" class="status-content">
+                    <p>Ready to use!</p>
+                </div>
+            </div>
+        </main>
+
+        <footer class="ms-welcome__footer">
+            <p class="ms-font-s">Powered by <a href="https://www.nutrient.io" target="_blank">Nutrient.io</a></p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html> 
